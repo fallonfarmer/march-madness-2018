@@ -138,7 +138,9 @@ def build_season_data(all_data):
         team_1_elo = get_elo(row['Season'], row['WTeamID'])
         team_2_elo = get_elo(row['Season'], row['LTeamID'])
 
-        # Add 100 to the home team (# taken from Nate Silver analysis.)
+        # Home Team Advantage
+        # Add 100 to the elo score of the home team
+        # taken from Nate Silver / fivethirtyeight analysis
         if row['WLoc'] == 'H':
             team_1_elo += 100
         elif row['WLoc'] == 'A':
@@ -173,18 +175,33 @@ def build_season_data(all_data):
         # same game we're trying to predict.
         if row['WFTA'] != 0 and row['LFTA'] != 0:
             stat_1_fields = {
+                # elo
                 'score': row['WScore'],
+                # field goal percentage
+                # field goals made over field goals attempted
                 'fgp': row['WFGM'] / row['WFGA'] * 100,
+                # field goals attempted
                 'fga': row['WFGA'],
+                # three pointers attempted
                 'fga3': row['WFGA3'],
+                # three point percentage
+                # three pointers made over three pointers attempted
                 '3pp': row['WFGM3'] / row['WFGA3'] * 100,
+                # free throw percentage
                 'ftp': row['WFTM'] / row['WFTA'] * 100,
+                # offensive rebounds
                 'or': row['WOR'],
+                # defensive rebounds
                 'dr': row['WDR'],
+                # assists
                 'ast': row['WAst'],
+                # turnovers
                 'to': row['WTO'],
+                # steals
                 'stl': row['WStl'],
+                # blocks
                 'blk': row['WBlk'],
+                # personal fouls
                 'pf': row['WPF']
             }
             stat_2_fields = {
