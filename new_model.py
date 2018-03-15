@@ -1,8 +1,5 @@
 
 # coding: utf-8
-
-# In[24]:
-
 import math
 import csv
 import random
@@ -11,8 +8,15 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn import cross_validation, linear_model
 
-
-# In[4]:
+base_elo = 1600
+team_elos = {}  # Reset each year.
+team_stats = {}
+X = []
+y = []
+submission_data = []
+folder = 'data'
+results_folder = 'results'
+prediction_year = 2018
 
 def calc_elo(win_team, lose_team, season):
     winner_rank = get_elo(season, win_team)
@@ -181,7 +185,7 @@ def build_season_data(all_data):
                 'pf': row['WPF'],
                 'form':row['Wform'],
                 'power_5':row['WTeam_p5'],
-                'high_rank':row['WTeam_rank']               
+                'high_rank':row['WTeam_rank']
             }
             stat_2_fields = {
                 'score': row['LScore'],
@@ -213,30 +217,18 @@ def build_season_data(all_data):
     return X
 
 
-# In[5]:
-
-base_elo = 1600
-team_elos = {}  # Reset each year.
-team_stats = {}
-X = []
-y = []
-submission_data = []
-folder = 'data'
-results_folder = 'results'
-prediction_year = 2018
 stat_fields = ['score', 'fga', 'fgp', 'fga3', '3pp', 'ftp', 'or', 'dr',
                    'ast', 'to', 'stl', 'blk', 'pf', 'form', 'power_5', 'high_rank']
 
 labels = ['Season', 't1','t1elo', 't1score', 't1fga', 't1fgp', 't1fga3', 't13pp', 't1ftp', 't1or', 't1dr',
                    't1ast', 't1to', 't1stl', 't1blk', 't1pf', 't1form', 't1p5', 't1rank',
-                  't2', 't2elo', 't2score', 't2fga', 
+                  't2', 't2elo', 't2score', 't2fga',
                   't2fgp', 't2fga3', 't23pp', 't2ftp', 't2or', 't2dr',
                    't2ast', 't2to', 't2stl', 't2blk', 't2pf', 't2form', 't2p5', 't2rank', 't2_win']
 
 initialize_data()
 
 
-# In[12]:
 
 # read data
 season_data = pd.read_csv(folder + '/RegularSeasonDetailedResults.csv')
@@ -244,26 +236,22 @@ season_data.columns
 season_data.shape
 
 
-# In[13]:
 
 tourney_data = pd.read_csv(folder + '/NCAATourneyDetailedResults_2003_2017.csv')
 tourney_data.columns
 tourney_data.shape
 
 
-# In[14]:
 
 conferences = pd.read_csv('Data/TeamConferences.csv')
 conferences.drop('ConfAbbrev', axis = 1, inplace = True)
 
 
-# In[15]:
 
 massey = pd.read_csv('Data/MasseyOrdinals.csv')
 preseason_rank = massey[['Season', 'RankingDayNum', 'TeamID', 'OrdinalRank']].groupby(['Season', 'TeamID'], as_index = False).agg(min)
 
 
-# In[17]:
 
 # combine data
 frames = [season_data, tourney_data]
@@ -286,14 +274,8 @@ all_data.rename(columns = {'OrdinalRank':'LTeam_rank'}, inplace = True)
 all_data['rank_diff'] = all_data['WTeam_rank'] - all_data['LTeam_rank']
 print(all_data.shape)
 
-
-# In[18]:
-
 # Build the working data.
 df = build_season_data(all_data)
-
-
-# In[19]:
 
 preds = pd.DataFrame(df, columns = labels)
 
@@ -307,8 +289,6 @@ y = preds['t2_win']
 preds[['t2rank', 't1rank']].head()
 
 
-# In[25]:
-
 print("Fitting on %d samples." % len(X))
 
 model = sklearn.linear_model.LogisticRegression()
@@ -319,9 +299,6 @@ print("Doing cross-validation.")
 print(cross_validation.cross_val_score(model, np.array(X), np.array(y), cv=10, scoring='accuracy').mean())
 
 model.fit(X, y)
-
-
-# In[26]:
 
 # Now predict tournament matchups.
 print("Getting teams.")
@@ -340,12 +317,12 @@ for team_1 in tourney_teams:
         if team_1 < team_2:
             prediction = predict_winner(
                 team_1, team_2, model, prediction_year, stat_fields)
-            label = str(prediction_year) + '_' + str(team_1) + '_' +                 str(team_2)
+            label = str(prediction_year) + '_' + str(team_1) + '_' + str(team_2)
             submission_data.append([label, prediction[0][0]])
 
 # Write the results.
 print("Writing %d results." % len(submission_data))
-with open(results_folder + '/submission.csv', 'w') as f:
+with open(results_folder + '/submission-2.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerow(['id', 'pred'])
     writer.writerows(submission_data)
@@ -375,15 +352,9 @@ for pred in submission_data:
             (team_id_map[winning], team_id_map[losing], proba)
         ]
     )
-with open(results_folder + '/readable-predictions.csv', 'w') as f:
+with open(results_folder + '/readable-predictions-2.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerows(readable)
-with open(results_folder + '/less-readable-predictions.csv', 'w') as f:
+with open(results_folder + '/less-readable-predictions-2.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerows(less_readable)
-
-
-# In[ ]:
-
-
-
