@@ -1,4 +1,3 @@
-
 # coding: utf-8
 import math
 import csv
@@ -291,7 +290,7 @@ preds[['t2rank', 't1rank']].head()
 
 print("Fitting on %d samples." % len(X))
 
-model = sklearn.linear_model.LogisticRegression()
+model = linear_model.LogisticRegression()
 # model = RandomForestClassifier(max_depth = 2)
 
 # Check accuracy.
