@@ -36,11 +36,11 @@ Season,Slot,NextSlot,NextSeed,StrongSeed,WeakSeed,StrongTeamID,WeakTeamID,Strong
 2018,R2W3,R3W2,Weak,R1W3,R1W6,1403,1196,Texas Tech,Florida
 2018,R2W4,R3W1,Weak,R1W4,R1W5,1455,1452,Wichita St,West Virginia
 2018,R2X1,R3X1,Strong,R1X1,R1X8,1242,1371,Kansas,Seton Hall
-2018,R2X2,R3X2,Strong,R1X2,R1X7,1181,1348,Duke,Rhode Island
-2018,R2X3,R3X2,Weak,R1X3,R1X6,1277,1395,Michigan St,TCU
+2018,R2X2,R3X2,Strong,R1X2,R1X7,1181,1328,Duke,Oklahoma
+2018,R2X3,R3X2,Weak,R1X3,R1X6,1277,1393,Michigan St,Syracuse
 2018,R2X4,R3X1,Weak,R1X4,R1X5,1120,1155,Auburn,Clemson
 2018,R2Y1,R3Y1,Strong,R1Y1,R1Y8,1438,1243,Virginia,Kansas St
-2018,R2Y2,R3Y2,Strong,R1Y2,R1Y7,1153,1305,Cincinnati,Nevada
+2018,R2Y2,R3Y2,Strong,R1Y2,R1Y7,1153,1400,Cincinnati,Texas
 2018,R2Y3,R3Y2,Weak,R1Y3,R1Y6,1397,1274,Tennessee,Miami FL
 2018,R2Y4,R3Y1,Weak,R1Y4,R1Y5,1112,1246,Arizona,Kentucky
 2018,R2Z1,R3Z1,Strong,R1Z1,R1Z8,1462,1199,Xavier,Florida St
@@ -48,8 +48,8 @@ Season,Slot,NextSlot,NextSeed,StrongSeed,WeakSeed,StrongTeamID,WeakTeamID,Strong
 2018,R2Z3,R3Z2,Weak,R1Z3,R1Z6,1276,1222,Michigan,Houston
 2018,R2Z4,R3Z1,Weak,R1Z4,R1Z5,1211,1326,Gonzaga,Ohio St
 2018,R3W1,R4W1,Strong,R2W1,R2W4,1437,1452,Villanova,West Virginia
-2018,R3W2,R4W1,Weak,R2W2,R2W3,1345,1403,Purdue,Texas Tech
-2018,R3X1,R4X1,Strong,R2X1,R2X4,1242,1155,Kansas,Clemson
+2018,R3W2,R4W1,Weak,R2W2,R2W3,1345,1196,Purdue,Florida
+2018,R3X1,R4X1,Strong,R2X1,R2X4,1242,1120,Kansas,Auburn
 2018,R3X2,R4X1,Weak,R2X2,R2X3,1181,1277,Duke,Michigan St
 2018,R3Y1,R4Y1,Strong,R2Y1,R2Y4,1438,1112,Virginia,Arizona
 2018,R3Y2,R4Y1,Weak,R2Y2,R2Y3,1153,1397,Cincinnati,Tennessee
@@ -58,8 +58,8 @@ Season,Slot,NextSlot,NextSeed,StrongSeed,WeakSeed,StrongTeamID,WeakTeamID,Strong
 2018,R4W1,R5WX,Strong,R3W1,R3W2,1437,1345,Villanova,Purdue
 2018,R4X1,R5WX,Weak,R3X1,R3X2,1242,1181,Kansas,Duke
 2018,R4Y1,R5YZ,Strong,R3Y1,R3Y2,1438,1153,Virginia,Cincinnati
-2018,R4Z1,R5YZ,Weak,R3Z1,R3Z2,1211,1276,Gonzaga,Michigan
-2018,R5WX,R6CH,Strong,R4W1,R4X1,1437,1242,Villanova,Kansas
-2018,R5YZ,R6CH,Weak,R4Y1,R4Z1,1438,1211,Virginia,Gonzaga
+2018,R4Z1,R5YZ,Weak,R3Z1,R3Z2,1462,1276,Xavier,Michigan
+2018,R5WX,R6CH,Strong,R4W1,R4X1,1437,1181,Villanova,Duke
+2018,R5YZ,R6CH,Weak,R4Y1,R4Z1,1438,1462,Virginia,Xavier
 2018,R6CH,R7WIN,Strong,R5WX,R5YZ,1437,1438,Villanova,Virginia
 2018,R7WIN,R6CH,,,,1437,,Villanova,
