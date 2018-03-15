@@ -4,7 +4,7 @@ and generates predictions for March Madness brackets.
 More about the competition:
 https://www.kaggle.com/c/mens-machine-learning-competition-2018
 
-Code adapted  to 2018 data from 2017 source:
+Code adapted to 2018 data from 2017 source:
 https://github.com/harvitronix/kaggle-march-madness-machine-learning/blob/master/mm.py
 """
 import math
