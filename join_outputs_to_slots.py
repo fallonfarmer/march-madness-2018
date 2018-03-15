@@ -93,5 +93,11 @@ if __name__ == "__main__":
         # returns [StrongTeamID, StrongTeamName]
         slot_winner = get_slot_winner(pred_formatted, row)
 
+        # save higher team in appropriate slot for next round
+        next_slot = row.NextSlot
+        seed_type = row.NextSeed
+
+        # assign the updated winner data in the next slot
+        slots.loc[slots['Slot'] == next_slot, [seed_type + 'TeamID',seed_type + 'TeamName']] = slot_winner[0], slot_winner[1]
 
     slots.tail()
