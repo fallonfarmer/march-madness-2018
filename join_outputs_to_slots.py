@@ -112,6 +112,10 @@ def get_slot_winner( pred_df, slot_row ):
             (teamB,teamA, 1 - probA)
         ]
     )
+    if 0.39 <= probA <= 0.61:
+        readable_outputs.append(
+            ['***Close call!']
+        )
 
     # save the highest probability for the next round
     winner_data = []
@@ -136,6 +140,11 @@ def get_slot_winner( pred_df, slot_row ):
         )
         winner_data = [name_id_dict[ teamB ], teamB]
 
+    # alert if weak team beats strong team
+    if slot_row.WeakTeamID == winner_data[0]:
+        readable_outputs.append(
+            ['*****Upset alert!']
+        )
     return winner_data
 
 
