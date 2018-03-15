@@ -26,6 +26,7 @@ submission_data = []
 folder = 'data'
 results_folder = 'results'
 prediction_year = 2018
+stats_file = '/data_stats-3.csv'
 
 def calc_elo(win_team, lose_team, season):
     winner_rank = get_elo(season, win_team)
@@ -319,6 +320,9 @@ all_data[['WTeam_champ', 'LTeam_champ']] = all_data[['WTeam_champ', 'LTeam_champ
 
 print(all_data.shape)
 all_data.tail()
+data_stats = all_data.describe()
+data_stats
+data_stats.to_csv(results_folder + stats_file, index_label='stat')
 
 # Build the working data.
 # NOTE: this step will run for a long time
