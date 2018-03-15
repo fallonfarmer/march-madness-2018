@@ -3,7 +3,9 @@ import csv
 
 folder = 'data'
 results_folder = 'results'
-prediction_year = 2018
+predictions_file = '/submission-2.csv'
+slots_output_file = '/less-readable-predictions-by-slots.csv'
+slots_readable_file = '/readable-predictions-by-slots.csv'
 # list to collect all print statements to go in a results file
 readable_outputs = []
 
@@ -157,7 +159,7 @@ if __name__ == "__main__":
     slots =  pd.read_csv(folder + '/NCAATourneySlots_Detailed_2018.csv', dtype=slot_dtypes)
     slots.head()
     # model prediction outputs
-    predictions =  pd.read_csv(results_folder + '/submission.csv')
+    predictions =  pd.read_csv(results_folder + predictions_file)
     predictions.head()
 
     # format pred data to join with slots
@@ -192,9 +194,9 @@ if __name__ == "__main__":
     slots.tail()
     # output updated slot data to csv in results folder
     print("Write updated slots data to file")
-    slots.to_csv(results_folder + '/less-readable-predictions-by-slots.csv', index=False)
+    slots.to_csv(results_folder + slots_output_file, index=False)
     # create readable results csv
     print("Writing %d readable bracket results." % len(slots))
-    with open(results_folder + '/readable-predictions-by-slots.csv', 'w') as f:
+    with open(results_folder + slots_readable_file, 'w') as f:
         writer = csv.writer(f)
         writer.writerows(readable_outputs)
