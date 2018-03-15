@@ -150,53 +150,52 @@ def get_slot_winner( pred_df, slot_row ):
     return winner_data
 
 
-if __name__ == "__main__":
-    # slots data
-    slot_dtypes = {
-        'StrongTeamID': str,
-        'WeakTeamID': str
-    }
-    slots =  pd.read_csv(folder + '/NCAATourneySlots_Detailed_2018.csv', dtype=slot_dtypes)
-    slots.head()
-    # model prediction outputs
-    predictions =  pd.read_csv(results_folder + predictions_file)
-    predictions.head()
+# slots data
+slot_dtypes = {
+    'StrongTeamID': str,
+    'WeakTeamID': str
+}
+slots =  pd.read_csv(folder + '/NCAATourneySlots_Detailed_2018.csv', dtype=slot_dtypes)
+slots.head()
+# model prediction outputs
+predictions =  pd.read_csv(results_folder + predictions_file)
+predictions.head()
 
-    # format pred data to join with slots
-    pred_formatted = format_pred_outputs( predictions )
-    pred_formatted.head()
+# format pred data to join with slots
+pred_formatted = format_pred_outputs( predictions )
+pred_formatted.head()
 
-    # for each slot
-    for row in slots.itertuples(index=False):
-        print("Joining slots to predictions")
+# for each slot
+for row in slots.itertuples(index=False):
+    print("Joining slots to predictions")
+    readable_outputs.append(
+        ['------------------------------------------']
+    )
+    if row.Slot == 'R7WIN':
         readable_outputs.append(
-            ['------------------------------------------']
+            [
+                'Overall 2018 champion: %s' %
+                (row.StrongTeamName)
+            ]
         )
-        if row.Slot == 'R7WIN':
-            readable_outputs.append(
-                [
-                    'Overall 2018 champion: %s' %
-                    (row.StrongTeamName)
-                ]
-            )
-            break
-        # join slots and pred to get higher prob team
-        # returns [StrongTeamID, StrongTeamName]
-        slot_winner = get_slot_winner(pred_formatted, row)
+        break
+    # join slots and pred to get higher prob team
+    # returns [StrongTeamID, StrongTeamName]
+    slot_winner = get_slot_winner(pred_formatted, row)
 
-        # save higher team in appropriate slot for next round
-        next_slot = row.NextSlot
-        seed_type = row.NextSeed
+    # save higher team in appropriate slot for next round
+    next_slot = row.NextSlot
+    seed_type = row.NextSeed
 
-        # assign the updated winner data in the next slot
-        slots.loc[slots['Slot'] == next_slot, [seed_type + 'TeamID',seed_type + 'TeamName']] = slot_winner[0], slot_winner[1]
+    # assign the updated winner data in the next slot
+    slots.loc[slots['Slot'] == next_slot, [seed_type + 'TeamID',seed_type + 'TeamName']] = slot_winner[0], slot_winner[1]
 
-    slots.tail()
-    # output updated slot data to csv in results folder
-    print("Write updated slots data to file")
-    slots.to_csv(results_folder + slots_output_file, index=False)
-    # create readable results csv
-    print("Writing %d readable bracket results." % len(slots))
-    with open(results_folder + slots_readable_file, 'w') as f:
-        writer = csv.writer(f)
-        writer.writerows(readable_outputs)
+slots.tail()
+# output updated slot data to csv in results folder
+print("Write updated slots data to file")
+slots.to_csv(results_folder + slots_output_file, index=False)
+# create readable results csv
+print("Writing %d readable bracket results." % len(slots))
+with open(results_folder + slots_readable_file, 'w') as f:
+    writer = csv.writer(f)
+    writer.writerows(readable_outputs)
