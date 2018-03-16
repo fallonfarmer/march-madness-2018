@@ -22,11 +22,15 @@ team_elos = {}  # Reset each year.
 team_stats = {}
 X = []
 y = []
+prediction_year = 2018
+
 submission_data = []
 folder = 'data'
 results_folder = 'results'
-prediction_year = 2018
 stats_file = '/data_stats-3.csv'
+predictions_file = '/submission-3.csv'
+pred_output_file = '/less-readable-predictions-3.csv'
+pred_readable_file = '/readable-predictions-3.csv'
 
 def calc_elo(win_team, lose_team, season):
     winner_rank = get_elo(season, win_team)
@@ -373,7 +377,7 @@ for team_1 in tourney_teams:
 
 # Write the results.
 print("Writing %d results." % len(submission_data))
-with open(results_folder + '/submission-3.csv', 'w') as f:
+with open(results_folder + predictions_file, 'w') as f:
     writer = csv.writer(f)
     writer.writerow(['id', 'pred'])
     writer.writerows(submission_data)
@@ -403,9 +407,9 @@ for pred in submission_data:
             (team_id_map[winning], team_id_map[losing], proba)
         ]
     )
-with open(results_folder + '/readable-predictions-3.csv', 'w') as f:
+with open(results_folder + pred_readable_file, 'w') as f:
     writer = csv.writer(f)
     writer.writerows(readable)
-with open(results_folder + '/less-readable-predictions-3.csv', 'w') as f:
+with open(results_folder + pred_output_file, 'w') as f:
     writer = csv.writer(f)
     writer.writerows(less_readable)
