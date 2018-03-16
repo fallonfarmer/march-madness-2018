@@ -335,13 +335,13 @@ df = build_season_data(all_data)
 preds = pd.DataFrame(df, columns = labels)
 
 print(preds.shape)
-
+preds.tail()
 print(preds.columns)
 drop_cols = ['Season', 't1', 't2', 't2_win']
 X = preds.drop(drop_cols, axis = 1)
 y = preds['t2_win']
 
-preds[['t2rank', 't1rank']].head()
+preds[['t2champ', 't1champ']].head()
 
 
 print("Fitting on %d samples." % len(X))
