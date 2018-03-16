@@ -22,10 +22,15 @@ team_elos = {}  # Reset each year.
 team_stats = {}
 X = []
 y = []
+prediction_year = 2018
+
 submission_data = []
 folder = 'data'
 results_folder = 'results'
-prediction_year = 2018
+stats_file = '/data_stats-3.csv'
+predictions_file = '/submission-3.csv'
+pred_output_file = '/less-readable-predictions-3.csv'
+pred_readable_file = '/readable-predictions-3.csv'
 
 def calc_elo(win_team, lose_team, season):
     winner_rank = get_elo(season, win_team)
@@ -111,7 +116,7 @@ def update_stats(season, team, fields):
 
 
 def get_stat(season, team, field):
-    if field == 'high_rank' or field == 'power_5':
+    if field == 'high_rank' or field == 'power_5' or field == 'champ':
         try:
             return team_stats[season][team][field][0]
         except:
@@ -194,7 +199,8 @@ def build_season_data(all_data):
                 'pf': row['WPF'],
                 'form':row['Wform'],
                 'power_5':row['WTeam_p5'],
-                'high_rank':row['WTeam_rank']
+                'high_rank':row['WTeam_rank'],
+                'champ':row['WTeam_champ']
             }
             stat_2_fields = {
                 'score': row['LScore'],
@@ -212,7 +218,8 @@ def build_season_data(all_data):
                 'pf': row['LPF'],
                 'form':row['Lform'],
                 'power_5':row['LTeam_p5'],
-                'high_rank':row['LTeam_rank']
+                'high_rank':row['LTeam_rank'],
+                'champ':row['LTeam_champ']
             }
             update_stats(row['Season'], row['WTeamID'], stat_1_fields)
             update_stats(row['Season'], row['LTeamID'], stat_2_fields)
@@ -227,13 +234,13 @@ def build_season_data(all_data):
 
 
 stat_fields = ['score', 'fga', 'fgp', 'fga3', '3pp', 'ftp', 'or', 'dr',
-                   'ast', 'to', 'stl', 'blk', 'pf', 'form', 'power_5', 'high_rank']
+                   'ast', 'to', 'stl', 'blk', 'pf', 'form', 'power_5', 'high_rank', 'champ']
 
 labels = ['Season', 't1','t1elo', 't1score', 't1fga', 't1fgp', 't1fga3', 't13pp', 't1ftp', 't1or', 't1dr',
-                   't1ast', 't1to', 't1stl', 't1blk', 't1pf', 't1form', 't1p5', 't1rank',
+                   't1ast', 't1to', 't1stl', 't1blk', 't1pf', 't1form', 't1p5', 't1rank', 't1champ',
                   't2', 't2elo', 't2score', 't2fga',
                   't2fgp', 't2fga3', 't23pp', 't2ftp', 't2or', 't2dr',
-                   't2ast', 't2to', 't2stl', 't2blk', 't2pf', 't2form', 't2p5', 't2rank', 't2_win']
+                   't2ast', 't2to', 't2stl', 't2blk', 't2pf', 't2form', 't2p5', 't2rank', 't2champ', 't2_win']
 
 initialize_data()
 
@@ -251,18 +258,39 @@ tourney_data.columns
 tourney_data.shape
 
 
-
+# is team within power 5 conferences
 conferences = pd.read_csv('Data/TeamConferences.csv')
 conferences.drop('ConfAbbrev', axis = 1, inplace = True)
 
 
-
+# preseason rankings
 massey = pd.read_csv('Data/MasseyOrdinals.csv')
 preseason_rank = massey[['Season', 'RankingDayNum', 'TeamID', 'OrdinalRank']].groupby(['Season', 'TeamID'], as_index = False).agg(min)
 
+# historical conference tournament winners and losers 2001-2018
+conf_tourney = pd.read_csv(folder + '/ConferenceTourneyGames.csv')
+conf_tourney.shape
+conf_tourney.head()
 
+# get the max day of the season to determine championship
+conf_champ_day = conf_tourney[['Season', 'ConfAbbrev', 'DayNum']].groupby(['Season', 'ConfAbbrev'], as_index = False).agg(max)
+conf_champ_day.shape
+conf_champ_day.tail()
 
-# combine data
+# get the winning team and losing team for max day
+conf_champ_results = conf_champ_day.merge(conf_tourney, on = ['Season', 'ConfAbbrev', 'DayNum'], how = 'left')
+# add binary column for modeling
+conf_champ_results['Champ'] = 1
+conf_champ_results.shape
+conf_champ_results.tail()
+
+# convert to binary of season, winning team, and champion binary
+conf_champ = conf_champ_results[['Season', 'WTeamID', 'Champ']]
+conf_champ.rename(columns = {'WTeamID' : 'TeamID'}, inplace = True)
+conf_champ.shape
+conf_champ.tail()
+
+# combine overall data into master dataframe
 frames = [season_data, tourney_data]
 all_data = pd.concat(frames)
 print(all_data.shape)
@@ -270,12 +298,15 @@ all_data.head()
 all_data['Wform'] = 1
 all_data['Lform'] = 0
 
+# join power 5
 all_data = all_data.merge(conferences, left_on = ['Season', 'WTeamID'], right_on = ['Season', 'TeamID'], how = 'left')
 all_data.rename(columns = {'power_5':'WTeam_p5'}, inplace = True)
 all_data = all_data.merge(conferences, left_on = ['Season', 'LTeamID'], right_on = ['Season', 'TeamID'], how = 'left')
 all_data.rename(columns = {'power_5':'LTeam_p5'}, inplace = True)
 all_data['p5_diff'] = all_data['WTeam_p5'] - all_data['LTeam_p5']
+print(all_data.shape)
 
+# join preseason rankings
 all_data = all_data.merge(preseason_rank, left_on = ['Season', 'WTeamID'], right_on = ['Season', 'TeamID'], how = 'left')
 all_data.rename(columns = {'OrdinalRank':'WTeam_rank'}, inplace = True)
 all_data = all_data.merge(preseason_rank, left_on = ['Season', 'LTeamID'], right_on = ['Season', 'TeamID'], how = 'left')
@@ -283,19 +314,34 @@ all_data.rename(columns = {'OrdinalRank':'LTeam_rank'}, inplace = True)
 all_data['rank_diff'] = all_data['WTeam_rank'] - all_data['LTeam_rank']
 print(all_data.shape)
 
+# join conference champion binaries
+all_data = all_data.merge(conf_champ, left_on = ['Season', 'WTeamID'], right_on = ['Season', 'TeamID'], how = 'left')
+all_data.rename(columns = {'Champ':'WTeam_champ'}, inplace = True)
+all_data = all_data.merge(conf_champ, left_on = ['Season', 'LTeamID'], right_on = ['Season', 'TeamID'], how = 'left')
+all_data.rename(columns = {'Champ':'LTeam_champ'}, inplace = True)
+# fillNAs with 0 zeros to create full binary column for if champ = 1, if not champ - 0
+all_data[['WTeam_champ', 'LTeam_champ']] = all_data[['WTeam_champ', 'LTeam_champ']].fillna(value=0)
+
+print(all_data.shape)
+all_data.tail()
+data_stats = all_data.describe()
+data_stats
+data_stats.to_csv(results_folder + stats_file, index_label='stat')
+
 # Build the working data.
+# NOTE: this step will run for a long time
 df = build_season_data(all_data)
 
 preds = pd.DataFrame(df, columns = labels)
 
 print(preds.shape)
-
+preds.tail()
 print(preds.columns)
 drop_cols = ['Season', 't1', 't2', 't2_win']
 X = preds.drop(drop_cols, axis = 1)
 y = preds['t2_win']
 
-preds[['t2rank', 't1rank']].head()
+preds[['t2champ', 't1champ']].head()
 
 
 print("Fitting on %d samples." % len(X))
@@ -331,7 +377,7 @@ for team_1 in tourney_teams:
 
 # Write the results.
 print("Writing %d results." % len(submission_data))
-with open(results_folder + '/submission-2.csv', 'w') as f:
+with open(results_folder + predictions_file, 'w') as f:
     writer = csv.writer(f)
     writer.writerow(['id', 'pred'])
     writer.writerows(submission_data)
@@ -361,9 +407,9 @@ for pred in submission_data:
             (team_id_map[winning], team_id_map[losing], proba)
         ]
     )
-with open(results_folder + '/readable-predictions-2.csv', 'w') as f:
+with open(results_folder + pred_readable_file, 'w') as f:
     writer = csv.writer(f)
     writer.writerows(readable)
-with open(results_folder + '/less-readable-predictions-2.csv', 'w') as f:
+with open(results_folder + pred_output_file, 'w') as f:
     writer = csv.writer(f)
     writer.writerows(less_readable)

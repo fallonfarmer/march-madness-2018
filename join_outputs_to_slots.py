@@ -3,9 +3,9 @@ import csv
 
 folder = 'data'
 results_folder = 'results'
-predictions_file = '/submission-2.csv'
-slots_output_file = '/less-readable-predictions-by-slots-2.csv'
-slots_readable_file = '/readable-predictions-by-slots-2.csv'
+predictions_file = '/submission-3.csv'
+slots_output_file = '/less-readable-predictions-by-slots-3.csv'
+slots_readable_file = '/readable-predictions-by-slots-3.csv'
 # list to collect all print statements to go in a results file
 readable_outputs = []
 
